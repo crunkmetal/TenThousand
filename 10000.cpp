@@ -1,18 +1,8 @@
 /*
-	10000 - A Dice Game
-  AKA: Farkle
-	
-  known bugs:
-		- incorporate functionality for more than two rolls if all die are scoring die
-		- sometimes, player 1's name does not show up in player scores
- 		- player order after starting game point (1000) reached doesn't always pick next player
- 		- ReRoll...
-			- sometimes autorolls
-			- if all six die are re-rolls on first roll, game does not ask to re-roll
- 		- add farkle count (3 farkles and you're out)
-		- add functionality for when player rolls all scoring die (scorethisround + scorelastround)
+10000 - A Dice Game
+AKA: Farkle
+*/
 
- */
 // preprocessor directives
 #include <iostream>
 #include <string>
