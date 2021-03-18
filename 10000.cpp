@@ -41,6 +41,7 @@ int pointScore(int*);
 int reRoll(bool*);
 void reRollResponse();
 void resetRerollStatus(bool*);
+void displayReRollers();
 
 int main()
 {
@@ -116,7 +117,20 @@ void resetRerollStatus(bool* reRollers)
 		reRollers[i] = false;
 	}
 }
-
+// rerolls and displays all non-scoring dice (for testing purposes)
+void displayReRollers()
+{
+	std::cout << "\n";
+	std::cout << "\tRe-Rolls: ";
+	for (int i = 0; i < NUM_DICE; i++)
+	{
+		std::cout << reRollers[i] << " ";
+		if (reRollers[i] == true)
+		{
+			diceRoll[i] = (rand() % 6 + 1);
+		}
+	}
+}
 
 
 
@@ -129,17 +143,8 @@ int reRoll(bool* reRollers)
 	{
 		std::cout << diceRoll[i] << " ";
 	}
-	std::cout << "\n";
-	std::cout << "\tRe-Rolls: ";
-	// rerolls and displays all non-scoring dice (for testing purposes)
-	for (int i = 0; i < NUM_DICE; i++)
-	{
-		std::cout << reRollers[i] << " ";
-		if (reRollers[i] == true)
-		{
-			diceRoll[i] = (rand() % 6 + 1);
-		}
-	}
+	
+	displayReRollers();
 	// reset all reRoller values to false
 	resetRerollStatus(reRollers);
 	// reset the value of dice to be re-rolled to zero
@@ -153,7 +158,7 @@ void reRollResponse()
 	if (reRollingDice > 0)
 	{
 		char rollAgain = 'n';
-		std::cout << "You have " << reRollingDice << " non-scoring die.\n";
+		std::cout << "\nYou have " << reRollingDice << " non-scoring die.\n";
 		std::cout << "Would you like to roll them? (Y or N)\t";
 		std::cin >> rollAgain;
 		std::cout << "\n\n\n";
@@ -173,8 +178,8 @@ void reRollResponse()
 			displayDiceRoll();
 			// invoke function to score new dice array
 			scoring();
-			resetRerollStatus(reRollers);
-
+			displayReRollers();
+			std::cout << "\n";
 		}
 		// handle incorrect user response
 		else
@@ -205,25 +210,16 @@ void gameBegins(int* player_score)
 		displayDiceRoll();
 		std::cout << "\n";
 		scoring();
-		std::cout << "\tRe-Rolls: ";
-
-		// rerolls and displays all non-scoring dice (for testing purposes)
-		for (int i = 0; i < NUM_DICE; i++)
-		{
-			std::cout << reRollers[i] << " ";
-			/*if (reRollers[i] == true)
-			{
-				diceRoll[i] = (rand() % 6 + 1);
-			}*/
-		}
-		// invoke function to score dice array
+		displayReRollers();
 		std::cout << "\n\n\n\n\n";
 		std::cout << player_names[i] << " scored " << scoreThisRound << " points.\n";
 		std::cout << "[X X] [X X]\t\t+ " << scoreThisRound << "\t\t[X X] [X X]\n";
 		std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
 		// invoke function to ask player to roll non-scoring dice
-		reRollResponse();
-
+		while (reRollingDice > 0)
+		{
+			reRollResponse();
+		}
 		// place value of dice array scoring into this player's score
 		player_score[i] += scoreThisRound;
 		std::cout << "\n\n\n\n\n";
@@ -831,14 +827,13 @@ int scoring()
 	// if statement for farkle roll, no scoring dice
 	if (reRollingDice == 6 && score == 0)
 	{
-		std::cout << "\t\t F A R K L E !\n";
+		std::cout << "\n\t\t F A R K L E !\n";
 		score = 0;
 		for (int i = 0; i < NUM_DICE; i++)
 		{
 			reRollers[i] = false;
 		}
 		reRollingDice = 0;
-
 	}
 
 	// reset value of global var to zero before...
