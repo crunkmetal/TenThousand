@@ -19,7 +19,7 @@ int diceRoll[6];
 int numPlayers, reRollingDice;
 int scoreThisRound;
 bool gameStartStatus = false;
-bool reRollers[6] = {false};
+bool reRollers[6] = { false };
 int player_score[] = { 0 };
 std::string player_names[10];
 
@@ -47,7 +47,7 @@ int main()
 	srand(static_cast<unsigned>(time(nullptr)));
 	intro();
 	playerCount();
-	player_score[numPlayers] = {0};
+	player_score[numPlayers] = { 0 };
 	player_names[numPlayers];
 	// clear screen
 	system("CLS");
@@ -78,7 +78,7 @@ int main()
 				player_score[i] = 0;
 				std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
 			}
-			else if(scoreThisRound >= 1000)
+			else if (scoreThisRound >= 1000)
 			{
 				player_score[i] = scoreThisRound;
 				std::cout << "Round Score:\t" << scoreThisRound << "\n";
@@ -109,7 +109,7 @@ int main()
 } // *** end of main ***
 
 
-void resetRerollStatus(bool *reRollers)
+void resetRerollStatus(bool* reRollers)
 {
 	for (int i = 0; i < NUM_DICE; i++)
 	{
@@ -121,7 +121,7 @@ void resetRerollStatus(bool *reRollers)
 
 
 // function to reroll non-scoring dice from previous roll
-int reRoll(bool *reRollers) 
+int reRoll(bool* reRollers)
 {
 	// prints original roll
 	std::cout << "\tOld Roll: ";
@@ -144,7 +144,7 @@ int reRoll(bool *reRollers)
 	resetRerollStatus(reRollers);
 	// reset the value of dice to be re-rolled to zero
 	reRollingDice = 0;
-	
+
 	return diceRoll, reRollingDice;
 }
 // function to ask user to ask user to re-roll non-scoring dice
@@ -236,7 +236,7 @@ void gameBegins(int* player_score)
 			return;
 		}
 	}
-	gameBegins(player_score);	
+	gameBegins(player_score);
 }
 // function for actions after first player scores 10000
 void gamePoint(int* player_score)
@@ -321,7 +321,7 @@ int firstRoll()
 		gameStartStatus = true;
 	}
 	// return score	
-	return scoreThisRound;	
+	return scoreThisRound;
 }
 // function to display game rules/introduction
 void intro()
@@ -352,34 +352,34 @@ void intro()
 	std::cout << "begins, players should establish which rules or variations will be used.  \n";
 	std::cout << "Our scoring summary chart makes this process easy and provides for endless \n";
 	std::cout << "variety in your 10000 games!\n\n";
-	
+
 	std::cout << "One player is chosen to begin and play moves clockwise around the table.  \n";
 	std::cout << "Each player in turn rolls all six dice and checks to see if they have rolled \n";
 	std::cout << "any scoring dice or combinations. (See Scoring below.) Any dice that score \n";
 	std::cout << "may be set aside and then the player may choose to roll all the remaining \n";
 	std::cout << "dice.  The player must set aside at least one scoring die of their choice if \n";
 	std::cout << "possible but is not required to set aside all scoring dice.\n\n";
-	
+
 	std::cout << "For example, if a player rolled 1 - 2 - 2 - 5 - 5 - 6 on their turn, they \n";
 	std::cout << "could set aside the 1 and the two 5's for scoring, or they could choose to \n";
 	std::cout << "set aside only the 1. Any scoring dice that are not set aside may be \n";
 	std::cout << "re-rolled along with the non-scoring dice.\n\n";
 	system("pause>nul|set/p =more ...");
 	system("CLS");
-	
+
 	std::cout << "\n\nIf all six dice have been set aside for scoring(known as having 'hot dice'),\n";
 	std::cout << "the player can choose to roll all six dice again and continue adding to their\n";
 	std::cout << "accumulated score or they can bank their points, end their turn, and pass the\n";
 	std::cout << "dice to the next player.\n\n";
-	
+
 	std::cout << "A player's turn continues until either they decide to stop(at which point\n";
 	std::cout << "they then score their accumulated points) or until they fail to roll any scoring\n";
 	std::cout << "dice on a throw.\n\n";
-	
+
 	std::cout << "If a player scores no points on a roll, this is known as a Farkle.  The \n";
 	std::cout << "player may continue to roll any dice that have not been previously set \n";
 	std::cout << "aside for scoring, but all of their points gained so far that turn are lost.\n\n";
-	
+
 	std::cout << "At the end of a player's turn, any points they have scored are written \n";
 	std::cout << "down and the dice are passed to the next player.\n\n";
 	std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n\n";
@@ -397,16 +397,16 @@ void intro()
 	std::cout << "\tThree 6's\t600 points\n";
 	std::cout << "\t1 - 2 - 3 - 4 - 5 - 6\t3000 points\n";
 	std::cout << "\t1 - 1 - 1 - 1 - 1 - 1\t10000 points and game is won!\n\n";
-	
+
 	std::cout << "*** Note that scoring combinations only count when made with a single \n";
 	std::cout << "throw. (Example: If a player rolls a 1 and sets it aside and then rolls \n";
 	std::cout << "two 1's on their next throw, they only score 300 points, not 1000.)\n\n";
 	system("pause>nul|set/p =more ...");
 	system("CLS");
-	
+
 	std::cout << "\n\nSometimes a single roll will provide multiple ways to score.  For example, \n";
 	std::cout << "a player rolling 1 - 2 - 4 - 5 - 5 - 5 could score one of the following :\n\n";
-	
+
 	std::cout << "\t100 points for the 1\n";
 	std::cout << "\t150 points for the 1 and a 5\n";
 	std::cout << "\t500 points for the three 5's\n";
@@ -510,7 +510,7 @@ int scoring()
 	{
 		switch (diceRoll[i])
 		{
-		// if this die is equal to a one...
+			// if this die is equal to a one...
 		case 1:
 			// each 'one' is worth 100 points
 			score += 100;
@@ -531,13 +531,13 @@ int scoring()
 		case 3:
 			threeDie++;
 			// add to dice to be rerolled count
-			reRollingDice++; 
+			reRollingDice++;
 			reRollers[i] = true;
 			break;
 		case 4:
 			fourDie++;
 			// add to dice to be rerolled count
-			reRollingDice++; 
+			reRollingDice++;
 			reRollers[i] = true;
 			break;
 		case 5:
@@ -564,7 +564,7 @@ int scoring()
 		// all of which become re-rollable die to surpass score of 10000
 		reRollingDice = 6;
 		// all of which become re-rollable die to surpass score of 10000
-		for (int i = 0; i < NUM_DICE; ++i) 
+		for (int i = 0; i < NUM_DICE; ++i)
 		{
 			reRollers[i] = true;
 		}
@@ -579,7 +579,7 @@ int scoring()
 		// all die are now rerollable
 		reRollingDice = 6;
 		// all die status changed to rerollable
-		for (int i = 0; i < NUM_DICE; ++i) 
+		for (int i = 0; i < NUM_DICE; ++i)
 		{
 			reRollers[i] = true;
 		}
@@ -597,7 +597,7 @@ int scoring()
 	{
 		score = (score - 300) + 1000;
 	} // end of scoring for 1s
-	
+
 	// scoring for twos (for three 2s)
 	if (twoDie == 3)
 	{
@@ -619,9 +619,9 @@ int scoring()
 		for (int i = 0; i < NUM_DICE; i++)
 		{
 			// if Die is a 2, set reRoller status to false
-			if (diceRoll[i] == 2 && dieCountOver3Count <= 3)
+			if (diceRoll[i] == 2 && dieCountOver3Count < 3)
 			{
-				++dieCountOver3Count;				dieCountOver3Count;
+				++dieCountOver3Count;				
 				reRollers[i] = false;
 			}
 		}
@@ -641,7 +641,7 @@ int scoring()
 		}
 		reRollingDice = 6;
 	} // end of scoring for twos
-		
+
 	// scoring for threes (for between three and five 2s)
 	if (threeDie == 3)
 	{
@@ -663,9 +663,9 @@ int scoring()
 		for (int i = 0; i < NUM_DICE; i++)
 		{
 			// if Die is a 3, set reRoller status to false
-			if (diceRoll[i] == 3 && dieCountOver3Count <= 3)
+			if (diceRoll[i] == 3 && dieCountOver3Count < 3)
 			{
-				++dieCountOver3Count;				dieCountOver3Count;
+				++dieCountOver3Count;				
 				reRollers[i] = false;
 			}
 		}
@@ -710,9 +710,9 @@ int scoring()
 		for (int i = 0; i < NUM_DICE; i++)
 		{
 			// if Die is a 4, set reRoller status to false
-			if (diceRoll[i] == 4 && dieCountOver3Count <= 3)
+			if (diceRoll[i] == 4 && dieCountOver3Count < 3)
 			{
-				++dieCountOver3Count;				dieCountOver3Count;
+				++dieCountOver3Count;				
 				reRollers[i] = false;
 			}
 		}
@@ -732,7 +732,7 @@ int scoring()
 		}
 		reRollingDice = 6;
 	} // end of scoring for fours
-	
+
 	// scoring for fives (for between three and five 4s)
 	if (fiveDie == 3)
 	{
@@ -782,8 +782,8 @@ int scoring()
 		}
 		reRollingDice = 6;
 	} // end of fives scoring
-	
-	
+
+
 	// scoring for sixes (for three 6s)
 	if (sixDie == 3)
 	{
@@ -805,9 +805,9 @@ int scoring()
 		for (int i = 0; i < NUM_DICE; i++)
 		{
 			// if Die is a 6, set reRoller status to false
-			if (diceRoll[i] == 6 && dieCountOver3Count <= 3)
+			if (diceRoll[i] == 6 && dieCountOver3Count < 3)
 			{
-				++dieCountOver3Count;				dieCountOver3Count;
+				++dieCountOver3Count;				
 				reRollers[i] = false;
 			}
 		}
@@ -827,7 +827,7 @@ int scoring()
 		}
 		reRollingDice = 6;
 	} // end of scoring for sixes
-	
+
 	// if statement for farkle roll, no scoring dice
 	if (reRollingDice == 6 && score == 0)
 	{
@@ -845,6 +845,6 @@ int scoring()
 	scoreThisRound = 0;
 	// set value of global var to this player's score
 	scoreThisRound = score;
-	
+
 	return scoreThisRound, reRollingDice;
 } // end of scoring()
