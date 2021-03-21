@@ -1,4 +1,3 @@
-
 /*
 10000 - A Dice Game
 AKA: Farkle
@@ -10,6 +9,7 @@ AKA: Farkle
 #include <ctime>
 #include <istream>
 #include <cstdlib>	// for screenclear
+#include <vector>
 #include <algorithm>
 
 //using namespace std;
@@ -23,27 +23,29 @@ int numPlayers, reRollingDice;
 int scoreThisRound;
 bool gameStartStatus = false;
 bool reRollers[6] = { false };
-int player_score[2] = { 0 };
+//int player_score[2] = { 0 };
 bool prevArray[NUM_DICE] = { false };
-std::string player_names[10];
+//std::string player_names[10];
+std::vector<std::string> player_names;
+std::vector<int> player_score;
 
 // function prototypes
 int playerCount();
 int* rollDice();
 void intro();
-std::string get_names();
+void get_names();
 void displayDiceRoll();
 void initPlayerScores();
 int scoring();
 void rollNotification(int);
 int firstRoll();
-void gameBegins(int*);
-void gamePoint(int*);
-void displayScores(int*);
+void gameBegins(std::vector<int>);
+void gamePoint(std::vector<int>);
+void displayScores(std::vector<int>);
 void playAgain();
-int pointScore(int*);
+int pointScore(std::vector<int>);
 int reRoll(bool*);
-void reRollResponse(int*);
+void reRollResponse(std::vector<int>);
 int resetRerollStatus(bool*);
 void displayReRollers();
 void makePrevReRollerArray();
@@ -57,11 +59,12 @@ int main()
 	srand(static_cast<unsigned>(time(nullptr)));
 	intro();
 	playerCount();
-	//player_score[numPlayers] = { 0 };
-	player_names[numPlayers];
+	std::vector<std::string> player_names(numPlayers);
 	// clear screen
 	system("CLS");
 	get_names();
+	//std::vector<int> player_score(numPlayers);
+
 	initPlayerScores();
 	std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
 	std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
@@ -77,7 +80,7 @@ int main()
 	// Start rolling until someone scores 1000 points
 	while (scoreThisRound < 1000 && gameStartStatus == false)
 	{
-		for (int i = 0; i < numPlayers; i++)
+		for (int i = 0; i < numPlayers; ++i)
 		{
 			std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
 			std::cout << " PLAYER:\t" << player_names[i] << " " << player_names[i] << " " << player_names[i] << " " << player_names[i] << " " << player_names[i] << "\n";
@@ -110,8 +113,7 @@ int main()
 	// begin game functionality
 	gameBegins(player_score);
 	// function to display game winning results
-	gamePoint(player_score);
-	std::cout << "\nThe game is over!";
+	std::cout << "\n\nThe game is over!";
 	// invoke function to ask user to play again
 	playAgain();
 	// main() requires an integer returned
@@ -127,9 +129,12 @@ void reRollAllReRollable()
 		reRollers[i] = true;
 	}
 	reRollingDice = 6;
+	//std::cout << "\n\n\n";
+
 	std::cout << "\nRe-rolling your hot dice.\n";
 	system("pause");
 	// invoke function to re-roll dice
+	std::cout << "\n\n";
 	reRoll(reRollers);
 	std::cout << "\n";
 	// invoke function to display new dice array
@@ -151,7 +156,7 @@ void showPrevReRollArray()
 	{
 		std::cout << prevArray[i] << " ";
 	}
-	
+
 }
 // function to make a new array of previous arrays elements for comparison
 void makePrevReRollerArray()
@@ -212,56 +217,60 @@ int reRoll(bool* reRollers)
 	return diceRoll, reRollingDice;
 }
 // function to ask user to ask user to re-roll non-scoring dice
-void reRollResponse(int *player_score)
-{	
-		char rollAgain = 'n';
-		std::cout << "\nYou have " << reRollingDice << " non-scoring die.\n";
-		std::cout << "Would you like to roll them? (Y or N)\t";
-		std::cin >> rollAgain;
+void reRollResponse(std::vector<int> player_score)
+{
+	char rollAgain = 'n';
+	std::cout << "\nYou have " << reRollingDice << " non-scoring die.\n";
+	std::cout << "Would you like to roll them? (Y or N)\t";
+	std::cin >> rollAgain;
+	std::cout << "\n\n\n";
+	// user choice keeps current score
+	if (rollAgain == 'N' || rollAgain == 'n')
+	{
+		resetRerollStatus(reRollers);
+		return;
+	}
+	// user choice rolls non-scoring dice again
+	if (rollAgain == 'Y' || rollAgain == 'y')
+	{
+		// invoke function to re-roll dice
+		reRoll(reRollers);
+		std::cout << "\n";
+		// invoke function to display new dice array
+		displayDiceRoll();
+		resetRerollStatus(reRollers);
+		// invoke function to score new dice array
+		scoring();
+		displayReRollers();
+		displayScores(player_score);
 		std::cout << "\n\n\n";
-		// user choice keeps current score
-		if (rollAgain == 'N' || rollAgain == 'n')
+		std::cout << "Score this round:\t" << scoreThisRound;
+
+		//std::cout << "\n";
+		// if all die are scoring die, add this score to player score and continue rolling
+		if ((reRollingDice == 0) && (scoreThisRound > 0))
 		{
-			resetRerollStatus(reRollers);
-			return;
+			rolloverScore += scoreThisRound;
+			std::cout << "\nSo far, your score is: " << scoreThisRound << ".";
+			reRollAllReRollable();
 		}
-		// user choice rolls non-scoring dice again
-		if (rollAgain == 'Y' || rollAgain == 'y')
-		{
-			// invoke function to re-roll dice
-			reRoll(reRollers);
-			std::cout << "\n";
-			// invoke function to display new dice array
-			displayDiceRoll();
-			resetRerollStatus(reRollers);
-			// invoke function to score new dice array
-			scoring();
-			displayReRollers();
-			displayScores(player_score);
-			//std::cout << "\n";
-			// if all die are scoring die, add this score to player score and continue rolling
-			if ((reRollingDice == 0) && (scoreThisRound > 0))
-			{
-				rolloverScore += scoreThisRound;
-				//displayScores(player_score);
-				reRollAllReRollable();
-			}
-		}
-		// handle incorrect user response
-		else
-		{
-			std::cout << "\nYou have entered an invalid response.";
-			// invoke this function again
-			reRollResponse(player_score);
-		}
-	
+	}
+	// handle incorrect user response
+	else
+	{
+		std::cout << "\nYou have entered an invalid response.";
+		// invoke this function again
+		reRollResponse(player_score);
+	}
+
 }
 // function to initiate gameplay (with scorekeeping} of players rolls after 1000 pts up to max score
-void gameBegins(int* player_score)
+void gameBegins(std::vector<int> player_score)
 {	// for each player
-	for (int i = 0; i < numPlayers; i++)
+	for (unsigned int i = 0; i < player_score.size(); ++i)
 	{
 		rolloverScore = 0;
+		std::cout << "\n\n\n";
 		std::cout << player_names[i];
 		// game paused (with non-default comment)
 		system("pause>nul|set/p ='s turn to roll...");
@@ -283,7 +292,7 @@ void gameBegins(int* player_score)
 		std::cout << "[X X] [X X]\t\t+ " << scoreThisRound << "\t\t[X X] [X X]\n";
 		std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
 		// while values of prevArray are not equal to values of reRollers, execute reRollResponse
-		while((reRollingDice != 0) && !(std::equal(std::begin(prevArray), std::end(prevArray), std::begin(reRollers))))
+		while ((reRollingDice != 0) && !(std::equal(std::begin(prevArray), std::end(prevArray), std::begin(reRollers))))
 		{
 			if (reRollingDice == 6 && scoreThisRound > 0)
 			{
@@ -296,29 +305,31 @@ void gameBegins(int* player_score)
 		}
 		// place value of dice array scoring into this player's score
 		player_score[i] += scoreThisRound;
-		std::cout << "\n\n";
-		std::cout << "Score after re-roll: " << scoreThisRound;
+
+		std::cout << "\n";
+		std::cout << "Score after re-roll: " << player_score[i];
 		// invoke function to display new dice array
 		displayScores(player_score);
 		// if player's score is greater than game point, escape loop
 		if (player_score[i] >= MAX_SCORE)
 		{
+			gamePoint(player_score);
 			return;
 		}
 	}
 	gameBegins(player_score);
 }
 // function for actions after first player scores 10000
-void gamePoint(int* player_score)
+void gamePoint(std::vector<int> player_score)
 {
-	std::cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::\n";
-	std::cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::\n";
-	std::cout << "\n**************************************\n\n";
-	std::cout << "\n\tTHE GAME IS OVER!\n";
+	std::cout << "\n\n [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
+	std::cout << "[] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n\n";
+	std::cout << "\n\t\tG A M E  O V E R !\n";
 	// invoke function to display final scores
 	displayScores(player_score);
-	std::cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::\n";
-	std::cout << "::::::::::::::::::::::::::::::::::::::::::::::::::::::\n";
+	std::cout << "\n\n";
+	std::cout << "[] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
+	std::cout << " [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] [] \n";
 }
 // function to ask player to play again
 void playAgain()
@@ -334,8 +345,11 @@ void playAgain()
 	}
 	// if player wishes to play again
 	if (playAgainResponse == 'Y' || playAgainResponse == 'y')
-	{	// reset value of last player's score from scoring()
-		scoreThisRound = 0;
+	{	// reset value players' scores to zero before game restart
+		for (unsigned int i = 0; i < player_score.size(); ++i)
+		{
+			player_score[i] = 0;
+		}
 		// reset switch for game status to start position
 		gameStartStatus = false;
 		// loop back to main to start game over
@@ -349,14 +363,14 @@ void playAgain()
 	}
 }
 // function to display player scores
-void displayScores(int* player_scores)
+void displayScores(std::vector<int> player_score)
 {
 	std::cout << "\n\n\n\n\n";
-	std::cout << "PLAYER SCORES\n";
+	std::cout << "\t\tPLAYER SCORES\n";
 	// display player scores
-	for (int i = 0; i < numPlayers; i++)
+	for (int i = 0; i < numPlayers; ++i)
 	{
-		std::cout << player_names[i] << ":\t" << player_score[i] << "\n";
+		std::cout << "\t\t" << player_names[i] << ":\t" << player_score[i] << "\n";
 	}
 	//std::cout << "\n";
 
@@ -516,26 +530,27 @@ int playerCount()
 	return 0;
 }
 // function to get user names
-std::string get_names()
+void get_names()
 {
 	std::string name;
 	// loop through players, have user assign a name for each
-	for (int i = 0; i < numPlayers; i++)
+	for (unsigned int i = 0; i < numPlayers; ++i)
 	{
 		std::cout << "\nWhat is the name of Player " << i + 1 << "?\t";
-		std::cin >> player_names[i];
+		std::cin >> name;
+		player_names.push_back(name);
 		// clear screen
 		system("CLS");
 	}
-	return *player_names;
 }
 // function to set initial player scores
 void initPlayerScores()
 {
 	// set each player score to 0
 	for (int i = 0; i < numPlayers; i++)
+		//for(unsigned int i =0; i < player_score.size(); ++i)
 	{
-		player_score[i] = 0;
+		player_score.push_back(0);
 	}
 }
 // function to roll dice to random number between one and six
@@ -632,7 +647,7 @@ int scoring()
 
 		// six ones is equal to 10000
 		score += MAX_SCORE;
-		
+
 		// all of which become re-rollable die to surpass score of 10000
 		for (int i = 0; i < NUM_DICE; ++i)
 		{
@@ -647,7 +662,7 @@ int scoring()
 	{	// subtract individual accumulated scores (from switch)from ones from score and add the value of a one threesome
 		score = (score - 150) + 3000;
 		std::cout << "\nYou rolled a straight... 1 2 3 4 5 6\n";
-		
+
 		// all die status changed to rerollable
 		for (int i = 0; i < NUM_DICE; ++i)
 		{
@@ -655,24 +670,12 @@ int scoring()
 		}
 		reRollingDice = 6;
 	}
-	// if statement for farkle roll, no scoring dice
-	if (reRollingDice == 6 && score == 0)
-	{
-		std::cout << "\n\t\t F A R K L E !\n";
-		score = 0;
-		for (int i = 0; i < NUM_DICE; i++)
-		{
-			reRollers[i] = false;
-		}
-		reRollingDice = 0;
-		return score;
-	}
-	
+
 	// scoring for ones rolled
 	if (oneDie == 5)
 	{
 		score = (score - 500) + 1200;
-	} 
+	}
 	else if (oneDie == 4)
 	{
 		score = (score - 400) + 1100;
@@ -681,12 +684,12 @@ int scoring()
 	{
 		score = (score - 300) + 1000;
 	}// end of scoring for 1s
-	
-	
 
 
 
-	
+
+
+
 
 	// scoring for twos (for six 2s)
 	if (twoDie == 6)
@@ -731,7 +734,7 @@ int scoring()
 		}
 	}// end of scoring for twos
 
-	
+
 
 
 
@@ -759,7 +762,7 @@ int scoring()
 			// if Die is a 3, set reRoller status to false
 			if (diceRoll[i] == 3 && dieCountOver3Count < 3)
 			{
-					dieCountOver3Count++;
+				dieCountOver3Count++;
 				reRollers[i] = false;
 				reRollingDice--;
 			}
@@ -805,7 +808,7 @@ int scoring()
 			// if Die is a 4, set reRoller status to false
 			if (diceRoll[i] == 4 && dieCountOver3Count < 3)
 			{
-				dieCountOver3Count++;				
+				dieCountOver3Count++;
 				reRollers[i] = false;
 				reRollingDice--;
 			}
@@ -826,7 +829,7 @@ int scoring()
 
 
 
-	
+
 	// scoring for fives (for between three and five 4s)
 	if (fiveDie == 6)
 	{
@@ -899,7 +902,7 @@ int scoring()
 			// if Die is a 6, set reRoller status to false
 			if (diceRoll[i] == 6 && dieCountOver3Count < 3)
 			{
-					dieCountOver3Count++;				
+				dieCountOver3Count++;
 				reRollers[i] = false;
 				reRollingDice--;
 			}
@@ -917,7 +920,19 @@ int scoring()
 			}
 		}
 	}// end of scoring for sixes
-
+	// if statement for farkle roll, no re-rolling die and no score = farkle
+	if (reRollingDice == 6 && score == 0)
+	{
+		std::cout << "\n\t\t F A R K L E !\n";
+		score = 0;
+		rolloverScore = 0;
+		for (int i = 0; i < NUM_DICE; i++)
+		{
+			reRollers[i] = false;
+		}
+		reRollingDice = 0;
+		return score, rolloverScore;
+	}
 
 
 
